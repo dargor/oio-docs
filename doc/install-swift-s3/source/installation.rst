@@ -36,6 +36,14 @@ Repositories Configuration
 
          # sudo yum -y install epel-release centos-release-openstack-pike
 
+   .. only:: ubuntu
+
+      .. code-block:: console
+
+         # sudo add-apt-repository cloud-archive:pike -y
+         # sudo apt-get update
+
+
 
 Installation
 ============
@@ -44,7 +52,7 @@ We will use the OpenStack modules to install and configure OpenStack KeyStone.
 
 Install the module:
 
-   .. only:: ubuntu or debian
+   .. only:: debian
 
       .. code-block:: console
 
@@ -54,7 +62,10 @@ Install the module:
 
       .. code-block:: console
 
-         # sudo sed -i "s@'upstart'@undef@" /etc/puppet/modules/keystone/manifests/params.pp
+         # sudo curl -L https://github.com/openstack/puppet-keystone/archive/stable/pike.tar.gz | tar xzf - -C /etc/puppet/modules/ ; sudo mv /etc/puppet/modules/puppet-keystone-stable-pike /etc/puppet/modules/keystone
+         # sudo curl -L https://github.com/openstack/puppet-openstacklib/archive/stable/pike.tar.gz | tar xzf - -C /etc/puppet/modules/ ; sudo mv /etc/puppet/modules/puppet-openstacklib-stable-pike /etc/puppet/modules/openstacklib
+         # sudo curl -L https://github.com/openstack/puppet-oslo/archive/stable/pike.tar.gz | tar xzf - -C /etc/puppet/modules/ ; sudo mv /etc/puppet/modules/puppet-oslo-stable-pike /etc/puppet/modules/oslo
+         # for module in puppetlabs/apache puppetlabs/inifile puppetlabs/stdlib ; do sudo puppet module install $module ; done
 
    .. only:: centos
 
