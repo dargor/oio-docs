@@ -52,8 +52,6 @@ Delivery Dependencies
 ~~~~~~~~~~~~~~~~~~~~~
 
 * puppet_: Apache License, Version 2
-* vagrant_: MIT License
-* virtualbox_: GPL
 
 
 Runtime Dependencies
@@ -151,8 +149,6 @@ Our runtime also requires the following python dependencies:
 .. _pyyaml: https://pypi.python.org/pypi/PyYAML
 .. _sqlite: http://sqlite.org/
 .. _templates: https://github.com/open-io/puppet-openiosds
-.. _vagrant: https://github.com/mitchellh/vagrant
-.. _virtualbox: https://www.virtualbox.org/
 .. _zeromq3: http://zeromq.org/
 .. _zookeeper: http://zookeeperapr.apache.org
 

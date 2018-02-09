@@ -8,7 +8,6 @@ for guide in arch-design \
              user-guide \
              cli-reference \
              project-guide \
-             vagrant-box \
              docker-image \
              install-swift-s3 \
              sandbox-guide \
