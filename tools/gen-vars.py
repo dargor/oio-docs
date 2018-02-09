@@ -32,7 +32,7 @@ def main(out):
             name = conv(component + '_' + k)
             value = vals[v]
 
-            print("{0}={1}".format(name, value), file=out)
+            print("export {0}={1}".format(name, value), file=out)
         print(file=out)
 
 
