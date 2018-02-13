@@ -32,16 +32,18 @@ Repositories Configuration
 
    .. only:: centos
 
-      .. code-block:: console
+      .. code-block:: bash
 
-         # sudo yum -y install epel-release centos-release-openstack-pike
+        sudo bash
+        yum -y install epel-release centos-release-openstack-pike
 
    .. only:: ubuntu
 
-      .. code-block:: console
+      .. code-block:: bash
 
-         # sudo add-apt-repository cloud-archive:pike -y
-         # sudo apt-get update
+        sudo bash
+        add-apt-repository cloud-archive:pike -y
+        apt-get update
 
 
 
@@ -54,28 +56,28 @@ Install the module:
 
    .. only:: debian
 
-      .. code-block:: console
+      .. code-block:: bash
 
-         # sudo puppet module install openstack-keystone
+        puppet module install openstack-keystone
 
    .. only:: ubuntu
 
-      .. code-block:: console
+      .. code-block:: bash
 
-         # sudo curl -L https://github.com/openstack/puppet-keystone/archive/stable/pike.tar.gz | tar xzf - -C /etc/puppet/modules/ ; sudo mv /etc/puppet/modules/puppet-keystone-stable-pike /etc/puppet/modules/keystone
-         # sudo curl -L https://github.com/openstack/puppet-openstacklib/archive/stable/pike.tar.gz | tar xzf - -C /etc/puppet/modules/ ; sudo mv /etc/puppet/modules/puppet-openstacklib-stable-pike /etc/puppet/modules/openstacklib
-         # sudo curl -L https://github.com/openstack/puppet-oslo/archive/stable/pike.tar.gz | tar xzf - -C /etc/puppet/modules/ ; sudo mv /etc/puppet/modules/puppet-oslo-stable-pike /etc/puppet/modules/oslo
-         # for module in puppetlabs/apache puppetlabs/inifile puppetlabs/stdlib ; do sudo puppet module install $module ; done
+        curl -L https://github.com/openstack/puppet-keystone/archive/stable/pike.tar.gz | tar xzf - -C /etc/puppet/modules/ ; mv /etc/puppet/modules/puppet-keystone-stable-pike /etc/puppet/modules/keystone
+        curl -L https://github.com/openstack/puppet-openstacklib/archive/stable/pike.tar.gz | tar xzf - -C /etc/puppet/modules/ ; mv /etc/puppet/modules/puppet-openstacklib-stable-pike /etc/puppet/modules/openstacklib
+        curl -L https://github.com/openstack/puppet-oslo/archive/stable/pike.tar.gz | tar xzf - -C /etc/puppet/modules/ ; mv /etc/puppet/modules/puppet-oslo-stable-pike /etc/puppet/modules/oslo
+        for module in puppetlabs/apache puppetlabs/inifile puppetlabs/stdlib ; do puppet module install $module ; done
 
    .. only:: centos
 
-      .. code-block:: console
+      .. code-block:: bash
 
-         # sudo yum install -y puppet curl
-         # sudo curl -L https://github.com/openstack/puppet-keystone/archive/stable/pike.tar.gz | tar xzf - -C /etc/puppet/modules/ ; sudo mv /etc/puppet/modules/puppet-keystone-stable-pike /etc/puppet/modules/keystone
-         # sudo curl -L https://github.com/openstack/puppet-openstacklib/archive/stable/pike.tar.gz | tar xzf - -C /etc/puppet/modules/ ; sudo mv /etc/puppet/modules/puppet-openstacklib-stable-pike /etc/puppet/modules/openstacklib
-         # sudo curl -L https://github.com/openstack/puppet-oslo/archive/stable/pike.tar.gz | tar xzf - -C /etc/puppet/modules/ ; sudo mv /etc/puppet/modules/puppet-oslo-stable-pike /etc/puppet/modules/oslo
-         # for module in puppetlabs/apache puppetlabs/inifile puppetlabs/stdlib ; do sudo puppet module install $module ; done
+        yum install -y puppet curl
+        curl -L https://github.com/openstack/puppet-keystone/archive/stable/pike.tar.gz | tar xzf - -C /etc/puppet/modules/ ; mv /etc/puppet/modules/puppet-keystone-stable-pike /etc/puppet/modules/keystone
+        curl -L https://github.com/openstack/puppet-openstacklib/archive/stable/pike.tar.gz | tar xzf - -C /etc/puppet/modules/ ; mv /etc/puppet/modules/puppet-openstacklib-stable-pike /etc/puppet/modules/openstacklib
+        curl -L https://github.com/openstack/puppet-oslo/archive/stable/pike.tar.gz | tar xzf - -C /etc/puppet/modules/ ; mv /etc/puppet/modules/puppet-oslo-stable-pike /etc/puppet/modules/oslo
+        for module in puppetlabs/apache puppetlabs/inifile puppetlabs/stdlib ; do puppet module install $module ; done
 
 
 Puppet Manifest
@@ -89,7 +91,7 @@ Here is an example manifest you can tune to your own settings:
 
 In a file called ``~/openio.pp``:
 
-   .. code-block:: puppet
+  .. code-block:: puppet
 
     $openio_proxy_url = "http://OPENIO_PROXY_URL:6006"
     $admin_token = 'KEYSTONE_ADMIN_UUID'
@@ -183,6 +185,7 @@ In a file called ``~/openio.pp``:
       memcache_servers   => "${ipaddress}:6019",
       region_name        => $region,
       middleware_swift3 => {'location' => $region},
+      project_name => 'services',
     }
     openiosds::memcached {'memcached-0':
       ns => 'OPENIO',
@@ -198,9 +201,57 @@ Package Installation and Service Configuration
 Now let's run Puppet, it install the packages and configure the services.
 Apply the manifest:
 
-   .. code-block:: console
+   .. code-block:: bash
 
-      # sudo puppet apply --no-stringify_facts ~/openio.pp
+        puppet apply --no-stringify_facts ~/openio.pp
 
 This step may take a few minutes. Please be patient as it downloads and installs all necessary packages.
 Once completed, all services will be installed and running using OpenIO GridInit init system.
+
+Test run
+==============================================
+
+Just to make sure our setup works, we should test it using the swift CLI:
+
+   .. only:: centos
+
+      .. code-block:: bash
+
+        yum -y install python-swiftclient
+
+   .. only:: ubuntu
+
+      .. code-block:: bash
+
+        apt-get install -y python-swiftclient
+
+Now create a credentials file for the demo account (change accordingly if you have changed the default configuration)
+
+   .. code-block:: bash
+
+        cat <<EOF >> ~/.demo_keystonerc
+        export OS_IDENTITY_API_VERSION="3"
+        export OS_AUTH_URL="http://127.0.0.1:5000/v3"
+        export OS_USER_DOMAIN_ID="default"
+        export OS_PROJECT_DOMAIN_ID="default"
+        export OS_PROJECT_NAME="demo"
+        export OS_USERNAME="demo"
+        export OS_PASSWORD="DEMO_PASS"
+        EOF
+
+Then source the file and try to get the stats from Swift:
+
+   .. code-block:: bash
+
+        source ~/.demo_keystonerc
+        swift stat
+            Account: AUTH_908fa1a46c8d44ae8db4580305b1cd9c
+            Containers: 0
+            Objects: 0
+            Bytes: 0
+            X-Timestamp: 1518478586.21649
+            X-Trans-Id: tx79ef74dbaf9940d0ac876-005a8224fa
+            Content-Type: text/plain; charset=utf-8
+            X-Openstack-Request-Id: tx79ef74dbaf9940d0ac876-005a8224fa
+
+If you get a similar output, then your Swift gateway is up and running.
