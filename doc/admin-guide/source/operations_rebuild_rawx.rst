@@ -44,6 +44,6 @@ You can now launch the rebuild by using the ``oio-blob-rebuilder`` tool:
 
   .. code-block:: console
 
-    # oio-blob-rebuilder <NAMESPACE> <RAWX_ID>
+    # oio-blob-rebuilder <NAMESPACE> --volume <RAWX_ID>
 
 
