@@ -98,7 +98,7 @@ for more informations on how to use *swift* command line::
   # swift upload container1 /etc/magic
   # swift stat container1
   # swift stat container1 etc/magic
-  # swift download container etc/magic
+  # swift download container1 etc/magic
 
 File is now at the *etc/magic* path, note that uploading the file trimmed out
 the leading */*.
